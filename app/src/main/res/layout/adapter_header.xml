@@ -6,7 +6,7 @@
         android:id="@+id/header_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Header header header"
+        android:text="Header"
         android:textColor="@android:color/holo_red_light"/>
 
 </LinearLayout>

@@ -3,7 +3,9 @@ package com.example.lijia.testrecyclerview;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -42,17 +44,26 @@ public class MainActivity extends AppCompatActivity {
         initData();
         //创建横向线性布局管理器
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
         myAdapter = new TestMyAdapter(stringList);
         mRecyclerView.setAdapter(myAdapter);
 
+        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.right = 10;
+                outRect.left = 10;
+            }
+        });
+
         View headView = LayoutInflater.from(this).inflate(R.layout.adapter_header, mRecyclerView, false);
         myAdapter.setHeaderView(headView);
 
         TextView footerView = new TextView(this);
-        footerView.setText("footer footer footer");
+        footerView.setText("footer");
         footerView.setTextColor(Color.RED);
         myAdapter.setFooterView(footerView);
 
@@ -126,6 +137,14 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.adapter_text, null);
                 viewHolder = new MyViewHolder(view);
+                view.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        Log.i("TAG", "onLongClick: ");
+
+                        return false;
+                    }
+                });
             }
 
             return viewHolder;
@@ -140,8 +159,6 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             int realPosition = getRealPostion(holder);
-            Log.i("TAG", "onBindViewHolder counts: " + getItemCount());
-            Log.i("TAG", "onBindViewHolder: " + position +"=="+  realPosition + " ==size :" + mList.size());
             String name = mList.get(realPosition).name;
             if (holder instanceof MyViewHolder) {
                 ((MyViewHolder) holder).textView.setText(name);
