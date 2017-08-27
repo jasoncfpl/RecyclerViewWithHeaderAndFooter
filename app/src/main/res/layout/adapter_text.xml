@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
               android:padding="4dp"
+              android:orientation="horizontal"
     android:background="@drawable/shape_adapter_item">
 
     <TextView
@@ -9,5 +10,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Test"/>
+
+    <ImageView
+        android:id="@+id/my_del_imv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:visibility="gone"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"/>
 
 </LinearLayout>

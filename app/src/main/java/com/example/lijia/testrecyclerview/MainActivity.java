@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    class TestMyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    class TestMyAdapter extends RecyclerView.Adapter<TestMyAdapter.MyViewHolder> {
 
         private static final int ITEM_NORMAL = 0;
         private static final int ITEM_HEAD = 1;
@@ -127,9 +128,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            RecyclerView.ViewHolder viewHolder = null;
+            MyViewHolder viewHolder = null;
             if (viewType == ITEM_HEAD) {
                 viewHolder = new MyViewHolder(mHeaderView);
             } else if (viewType == ITEM_FOOTER) {
@@ -137,21 +138,13 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.adapter_text, null);
                 viewHolder = new MyViewHolder(view);
-                view.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        Log.i("TAG", "onLongClick: ");
-
-                        return false;
-                    }
-                });
             }
 
             return viewHolder;
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(final MyViewHolder holder, final int position) {
             if(getItemViewType(position) == ITEM_HEAD) {
                 return;
             }
@@ -163,6 +156,23 @@ public class MainActivity extends AppCompatActivity {
             if (holder instanceof MyViewHolder) {
                 ((MyViewHolder) holder).textView.setText(name);
             }
+
+            holder.closeImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("TAG", "onClick: del del del ");
+                    holder.closeImageView.setVisibility(View.GONE);
+                }
+            });
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Log.i("TAG", "onLongClick: " + position);
+                    holder.closeImageView.setVisibility(View.VISIBLE);
+                    return false;
+                }
+            });
 
         }
 
@@ -191,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         class MyViewHolder extends RecyclerView.ViewHolder {
 
             TextView textView;
+            ImageView closeImageView;
 
             public MyViewHolder(View itemView) {
 
@@ -198,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 if (itemView == mHeaderView || itemView == mFooterView) return;
 
                 textView = (TextView) itemView.findViewById(R.id.my_tv);
+                closeImageView = (ImageView) itemView.findViewById(R.id.my_del_imv);
             }
         }
     }
