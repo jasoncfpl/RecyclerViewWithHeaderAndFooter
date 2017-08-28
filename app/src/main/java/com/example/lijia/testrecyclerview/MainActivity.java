@@ -24,11 +24,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView mRecyclerView;
+    private ScaleRecyclerView mRecyclerView;
     private TestMyAdapter myAdapter;
     List<DataModel> stringList = new ArrayList<DataModel>();
 
@@ -39,13 +40,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView = (ScaleRecyclerView) findViewById(R.id.my_recycler_view);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
         initData();
         //创建横向线性布局管理器
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        layoutManager.supportsPredictiveItemAnimations();
         mRecyclerView.setLayoutManager(layoutManager);
 
         myAdapter = new TestMyAdapter(stringList);
@@ -72,9 +74,11 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this
-                        , TestActivity.class);
-                startActivity(intent);
+                stringList.add(new DataModel("Test",TestMyAdapter.ITEM_NORMAL));
+                myAdapter.notifyDataSetChanged();
+//                Intent intent = new Intent(MainActivity.this
+//                        , TestActivity.class);
+//                startActivity(intent);
 
             }
         });
@@ -106,11 +110,14 @@ public class MainActivity extends AppCompatActivity {
         private static final int ITEM_HEAD = 1;
         private static final int ITEM_FOOTER = -1;
 
-
         private View mHeaderView;
-        private View mFooterView;
 
+        private View mFooterView;
         private List<DataModel> mList = new ArrayList<DataModel>();
+
+        private HashMap<Integer,Boolean> selectedMap = new HashMap<>();
+
+        private int selectedPos = -1;
 
         public TestMyAdapter(List<DataModel> mList) {
             this.mList = mList;
@@ -139,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.adapter_text, null);
                 viewHolder = new MyViewHolder(view);
             }
-
+//            viewHolder.setIsRecyclable(false);
             return viewHolder;
         }
 
@@ -151,16 +158,25 @@ public class MainActivity extends AppCompatActivity {
             if (getItemViewType(position) == ITEM_FOOTER) {
                 return;
             }
-            int realPosition = getRealPostion(holder);
+            final int realPosition = getRealPostion(holder);
             String name = mList.get(realPosition).name;
             if (holder instanceof MyViewHolder) {
-                ((MyViewHolder) holder).textView.setText(name);
+                holder.textView.setText(name);
             }
 
             holder.closeImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("TAG", "onClick: del del del ");
+                    Log.i("TAG", "onClick: del del del " + realPosition);
+                    Log.i("TAG", "onClick before: " + mList.size());
+                    notifyItemRemoved(realPosition);
+                    mList.remove(realPosition);
+                    Log.i("TAG", "onClick after: " + mList.size());
+                    notifyDataSetChanged();
+                    if (realPosition != mList.size()) {
+//                        notifyItemRangeChanged(0,mList.size() - realPosition);
+                    }
+
                     holder.closeImageView.setVisibility(View.GONE);
                 }
             });
@@ -168,8 +184,9 @@ public class MainActivity extends AppCompatActivity {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    Log.i("TAG", "onLongClick: " + position);
+                    Log.i("TAG", "onLongClick: " + realPosition);
                     holder.closeImageView.setVisibility(View.VISIBLE);
+                    selectedPos = realPosition;
                     return false;
                 }
             });
@@ -211,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
                 textView = (TextView) itemView.findViewById(R.id.my_tv);
                 closeImageView = (ImageView) itemView.findViewById(R.id.my_del_imv);
             }
+
         }
     }
 

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-              android:padding="4dp"
-              android:orientation="horizontal"
-    android:background="@drawable/shape_adapter_item">
+<com.example.lijia.testrecyclerview.FocusRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:padding="4dp" android:orientation="horizontal"
+    android:background="@drawable/shape_adapter_item"
+    android:focusable="true">
 
     <TextView
         android:id="@+id/my_tv"
@@ -19,4 +18,4 @@
         android:visibility="gone"
         android:src="@android:drawable/ic_menu_close_clear_cancel"/>
 
-</LinearLayout>
+</com.example.lijia.testrecyclerview.FocusRelativeLayout>

@@ -7,4 +7,10 @@ package com.example.lijia.testrecyclerview;
 public class DataModel {
     String name;
     int type;
+    public DataModel() {
+    }
+    public DataModel(String test, int itemNormal) {
+        this.name = test;
+        this.type = itemNormal;
+    }
 }
