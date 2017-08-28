@@ -1,5 +1,6 @@
 package com.example.lijia.testrecyclerview;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -7,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,6 +20,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         layoutManager.supportsPredictiveItemAnimations();
         mRecyclerView.setLayoutManager(layoutManager);
 
-        myAdapter = new TestMyAdapter(stringList);
+        myAdapter = new TestMyAdapter(this,stringList);
         mRecyclerView.setAdapter(myAdapter);
 
         mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -119,8 +123,11 @@ public class MainActivity extends AppCompatActivity {
 
         private int selectedPos = -1;
 
-        public TestMyAdapter(List<DataModel> mList) {
+        Animation zoomin;
+
+        public TestMyAdapter(Context con,List<DataModel> mList) {
             this.mList = mList;
+//            zoomin = AnimationUtils.loadAnimation(con, R.anim.zoomin);
             notifyItemInserted(0);
         }
 
@@ -178,15 +185,28 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     holder.closeImageView.setVisibility(View.GONE);
+                    ViewCompat.animate(v).scaleX(1f).scaleY(1f).translationZ(1).start();
                 }
             });
 
+            holder.itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    Log.i("TAG", "onFocusChange: " + hasFocus);
+                    if (!hasFocus) {
+                        holder.closeImageView.setVisibility(View.GONE);
+                        ViewCompat.animate(v).scaleX(1f).scaleY(1f).translationZ(1).start();
+                    }
+                }
+            });
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     Log.i("TAG", "onLongClick: " + realPosition);
                     holder.closeImageView.setVisibility(View.VISIBLE);
                     selectedPos = realPosition;
+
+                    ViewCompat.animate(v).scaleX(2f).scaleY(1.2f).translationZ(1).start();
                     return false;
                 }
             });
